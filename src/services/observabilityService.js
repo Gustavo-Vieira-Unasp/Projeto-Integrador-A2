@@ -4,6 +4,7 @@
 
 const metrics = {
   fetch_error_total: 0,
+  reading_rejected_total: 0,
   screen_render_ms: {},
   alerts_displayed_total: 0,
 };
@@ -48,6 +49,11 @@ export function logWarn(event, fields = {}) {
 export function logError(event, fields = {}) {
   metrics.fetch_error_total += 1;
   return emit('error', event, fields);
+}
+
+export function logLeituraRejeitada(fields = {}) {
+  metrics.reading_rejected_total += 1;
+  return emit('warn', 'reading_rejected', fields);
 }
 
 export function recordScreenRender(screen, durationMs) {

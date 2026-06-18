@@ -24,6 +24,7 @@ export function renderNavbar(cenarioAtual, rotaAtiva = 'principal') {
     { id: 'alertas', label: 'Alertas', hash: '#/alertas' },
     { id: 'historico', label: 'Histórico', hash: '#/historico' },
     { id: 'canteiros', label: 'Canteiros', hash: '#/canteiros' },
+    { id: 'evidencias-c1', label: 'C1', hash: '#/evidencias-c1' },
   ];
 
   const navLinks = links.map(l => {
@@ -63,6 +64,13 @@ export function renderNavbar(cenarioAtual, rotaAtiva = 'principal') {
   `;
 }
 
+export const MOTIVO_REJEICAO_LABEL = {
+  DHT22_SENTINEL: 'Sentinel DHT22 (85°C)',
+  OUT_OF_RANGE_HIGH: 'Fora de faixa física',
+  OUT_OF_RANGE_LOW: 'Fora de faixa física',
+  NOT_A_NUMBER: 'Valor não numérico',
+};
+
 /**
  * Renderiza um card de sensor.
  *
@@ -78,20 +86,36 @@ export function renderNavbar(cenarioAtual, rotaAtiva = 'principal') {
  *   - {boolean}      showProgressBar- Exibir barra de progresso (Passo 1).
  *   - {number}       progressBarPct - % de preenchimento da barra (Passo 1).
  *   - {string|null}  badge          - Texto de badge contextual (Passo 5).
+ *   - {string|null}  motivoRejeicao - Código de rejeição UC-01 (C1 integridade).
+ *   - {boolean}      temperaturaImprovavel - Aceito UC-01, improvável p/ horta (>50 °C).
  */
 export function renderCardSensor(titulo, valor, unidade, estadoCard, descricaoStatus, accent = {}, opcoes = {}) {
   const isOffline = estadoCard === 'offline';
   const isFalha = estadoCard === 'parcial' && (valor === null || valor === undefined);
+  const motivoRejeicao = opcoes.motivoRejeicao || null;
+  const isRejeitada = !isOffline && !isFalha
+    && (valor === null || valor === undefined)
+    && motivoRejeicao
+    && motivoRejeicao !== 'MISSING';
+  const isImprovavel = !isOffline && !isFalha && !isRejeitada
+    && opcoes.temperaturaImprovavel === true
+    && valor !== null && valor !== undefined;
   const icone = accent.icone || '📊';
-  const corValor = accent.corValor || 'text-slate-900 dark:text-white';
-  const corBarra = accent.corBarra || 'bg-slate-300 dark:bg-slate-700';
+  const corValor = isImprovavel
+    ? 'text-amber-600 dark:text-amber-400'
+    : (accent.corValor || 'text-slate-900 dark:text-white');
+  const corBarra = isRejeitada
+    ? 'bg-red-500'
+    : isImprovavel
+      ? 'bg-amber-500'
+      : (accent.corBarra || 'bg-slate-300 dark:bg-slate-700');
 
   // Passo 3 — Timestamp
   const timestamp = opcoes.timestamp || null;
 
   // Passo 4 — Delta / tendência
   const delta = (opcoes.delta !== null && opcoes.delta !== undefined) ? opcoes.delta : null;
-  const deltaNaoNulo = delta !== null && !isOffline && !isFalha;
+  const deltaNaoNulo = delta !== null && !isOffline && !isFalha && !isRejeitada;
   const deltaHtml = deltaNaoNulo
     ? `<span class="text-[9px] font-mono ${delta >= 0 ? 'text-emerald-500' : 'text-red-400'} leading-none">
          ${delta >= 0 ? '▲' : '▼'} ${Math.abs(delta)}
@@ -99,7 +123,7 @@ export function renderCardSensor(titulo, valor, unidade, estadoCard, descricaoSt
     : '';
 
   // Passo 1 — Barra de progresso
-  const showProgressBar = opcoes.showProgressBar === true && !isOffline && !isFalha && valor !== null;
+  const showProgressBar = opcoes.showProgressBar === true && !isOffline && !isFalha && !isRejeitada && valor !== null;
   const progressBarPct = Math.min(100, Math.max(0, opcoes.progressBarPct ?? 0));
   const progressBarHtml = showProgressBar
     ? `<div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1 mt-1.5">
@@ -108,11 +132,28 @@ export function renderCardSensor(titulo, valor, unidade, estadoCard, descricaoSt
     : '';
 
   // Passo 5 — Badge contextual (chuva / irrigação)
-  const badge = (!isOffline && !isFalha && opcoes.badge) ? opcoes.badge : null;
-  const statusTexto = isOffline ? 'Inacessivel' : isFalha ? 'Erro I2C' : (badge || descricaoStatus);
+  const badge = (!isOffline && !isFalha && !isRejeitada && !isImprovavel && opcoes.badge) ? opcoes.badge : null;
+  const subtituloRejeicao = isRejeitada
+    ? (MOTIVO_REJEICAO_LABEL[motivoRejeicao] || 'Leitura inválida')
+    : null;
+  const statusTexto = isOffline
+    ? 'Inacessivel'
+    : isFalha
+      ? 'Erro I2C'
+      : isRejeitada
+        ? subtituloRejeicao
+        : isImprovavel
+          ? 'Improvável p/ horta'
+          : (badge || descricaoStatus);
+
+  const borderClass = isRejeitada
+    ? 'border-red-300 dark:border-red-900/60'
+    : isImprovavel
+      ? 'border-amber-300 dark:border-amber-800/60'
+      : 'border-slate-200 dark:border-slate-800/80';
 
   return `
-    <div class="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800/80 rounded-lg flex h-32 relative shadow-md overflow-hidden">
+    <div class="bg-white dark:bg-[#0f172a] border ${borderClass} rounded-lg flex h-32 relative shadow-md overflow-hidden">
       <div class="w-1.5 shrink-0 ${corBarra}"></div>
       <div class="flex flex-col justify-between p-4 flex-1 min-w-0">
         <div class="flex items-center justify-between">
@@ -127,12 +168,14 @@ export function renderCardSensor(titulo, valor, unidade, estadoCard, descricaoSt
             ? `<p class="text-xs text-slate-500 italic">Dispositivo Offline</p>`
             : isFalha
               ? `<p class="text-xs font-bold text-amber-500">Falha no Sensor</p>`
-              : `<p class="text-3xl font-black ${corValor} tracking-tight font-mono leading-none">${valor}<span class="text-xs font-normal text-slate-400 ml-0.5">${unidade}</span></p>`
+              : isRejeitada
+                ? `<p class="text-xs font-bold text-red-500">Leitura inválida</p>`
+                : `<p class="text-3xl font-black ${corValor} tracking-tight font-mono leading-none">${valor}<span class="text-xs font-normal text-slate-400 ml-0.5">${unidade}</span></p>`
           }
           ${progressBarHtml}
         </div>
         <div class="text-[10px] text-slate-500 font-medium flex items-center justify-between gap-1">
-          <span class="truncate">"${statusTexto}"</span>
+          <span class="truncate ${isRejeitada ? 'text-red-500 dark:text-red-400' : isImprovavel ? 'text-amber-600 dark:text-amber-400' : ''}">"${statusTexto}"</span>
           ${timestamp ? `<span class="text-[9px] font-mono text-slate-400 shrink-0">${timestamp}</span>` : ''}
         </div>
       </div>

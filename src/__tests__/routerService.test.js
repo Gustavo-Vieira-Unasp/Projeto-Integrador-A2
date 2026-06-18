@@ -10,6 +10,7 @@ describe('routerService', () => {
     expect(parseHash('#/alertas')).toBe('alertas');
     expect(parseHash('#/historico')).toBe('historico');
     expect(parseHash('#/canteiros')).toBe('canteiros');
+    expect(parseHash('#/evidencias-c1')).toBe('evidencias-c1');
     expect(parseHash('#/')).toBe('principal');
     expect(parseHash('#/unknown')).toBe('principal');
   });

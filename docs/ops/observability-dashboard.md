@@ -31,6 +31,7 @@ Cada evento é emitido como **JSON em uma linha** no console do browser:
 | `screen_render` | Fim do render de cada tela (com `durationMs`) |
 | `alerts_displayed` | Tela Alertas carregada |
 | `csv_export` | Export CSV do Histórico |
+| `reading_rejected` | Leitura UC-01 rejeitada na ingestão (`apiService.normalizarRegistro`) |
 
 ### Request ID
 
@@ -45,6 +46,7 @@ Expostas via `window.__PHORTA_METRICS__()` no console:
 | Métrica | Tipo | Descrição |
 |---------|------|-----------|
 | `fetch_error_total` | Counter | Falhas de fetch acumuladas |
+| `reading_rejected_total` | Counter | Leituras UC-01 rejeitadas na ingestão |
 | `screen_render_ms` | Gauge map | Tempo de render por tela (`principal`, `alertas`, `historico`, `canteiros`) |
 | `alerts_displayed_total` | Counter | Total de alertas exibidos |
 

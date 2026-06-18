@@ -89,6 +89,16 @@ describe('renderCardSensor — estado parcial / falha', () => {
     expect(html).toContain('63.5');
     expect(html).not.toContain('Falha no Sensor');
   });
+
+  test('exibe estado vermelho de rejeição UC-01 com motivo estruturado', () => {
+    const html = renderCardSensor('Temperatura', null, '°C', 'normal', 'Quente', {}, {
+      motivoRejeicao: 'OUT_OF_RANGE_HIGH',
+    });
+    expect(html).toContain('Leitura inválida');
+    expect(html).toContain('Fora de faixa física');
+    expect(html).toContain('border-red-300');
+    expect(html).toContain('bg-red-500');
+  });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

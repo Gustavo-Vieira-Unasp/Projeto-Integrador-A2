@@ -1,0 +1,312 @@
+# Evidência C1 — test-unit-c1.log
+# Gerado em: 2026-06-18T18:57:35.236Z
+# Comando: npx jest src/__tests__/apiService.test.js src/__tests__/observabilityService.test.js --verbose --no-coverage
+
+  console.log
+    📡 Buscando histórico completo: https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.log
+    ✅ 1 registros recebidos de https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net
+
+      at log (src/services/apiService.js:240:11)
+
+  console.log
+    📡 Buscando histórico completo: https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.warn
+    ⚠️ Azure falhou: Azure timeout. Tentando Render...
+
+      252 |     };
+      253 |   } catch (err) {
+    > 254 |     console.warn(`⚠️ Azure falhou: ${err.message}. Tentando Render...`);
+          |             ^
+      255 |   }
+      256 |
+      257 |   try {
+
+      at warn (src/services/apiService.js:254:13)
+      at buscarDadosDispositivo (src/services/apiService.js:280:17)
+      at Object.<anonymous> (src/__tests__/apiService.test.js:99:23)
+
+  console.log
+    📡 Buscando histórico completo: https://server-horta.onrender.com/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.log
+    ✅ 1 registros recebidos de https://server-horta.onrender.com
+
+      at log (src/services/apiService.js:240:11)
+
+  console.log
+    📡 Buscando histórico completo: https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.warn
+    ⚠️ Azure falhou: Sem conexão. Tentando Render...
+
+      252 |     };
+      253 |   } catch (err) {
+    > 254 |     console.warn(`⚠️ Azure falhou: ${err.message}. Tentando Render...`);
+          |             ^
+      255 |   }
+      256 |
+      257 |   try {
+
+      at warn (src/services/apiService.js:254:13)
+      at buscarDadosDispositivo (src/services/apiService.js:280:17)
+      at Object.<anonymous> (src/__tests__/apiService.test.js:108:23)
+
+  console.log
+    📡 Buscando histórico completo: https://server-horta.onrender.com/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.error
+    💥 Render também falhou: Sem conexão.
+
+      264 |     };
+      265 |   } catch (err) {
+    > 266 |     console.error(`💥 Render também falhou: ${err.message}.`);
+          |             ^
+      267 |   }
+      268 |
+      269 |   return null;
+
+      at error (src/services/apiService.js:266:13)
+      at buscarDadosDispositivo (src/services/apiService.js:280:17)
+      at Object.<anonymous> (src/__tests__/apiService.test.js:108:23)
+
+  console.log
+    📡 Buscando histórico completo: https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.warn
+    ⚠️ Azure falhou: Sem conexão. Tentando Render...
+
+      252 |     };
+      253 |   } catch (err) {
+    > 254 |     console.warn(`⚠️ Azure falhou: ${err.message}. Tentando Render...`);
+          |             ^
+      255 |   }
+      256 |
+      257 |   try {
+
+      at warn (src/services/apiService.js:254:13)
+      at buscarDadosDispositivo (src/services/apiService.js:280:17)
+      at Object.<anonymous> (src/__tests__/apiService.test.js:124:23)
+
+  console.log
+    📡 Buscando histórico completo: https://server-horta.onrender.com/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.error
+    💥 Render também falhou: Sem conexão.
+
+      264 |     };
+      265 |   } catch (err) {
+    > 266 |     console.error(`💥 Render também falhou: ${err.message}.`);
+          |             ^
+      267 |   }
+      268 |
+      269 |   return null;
+
+      at error (src/services/apiService.js:266:13)
+      at buscarDadosDispositivo (src/services/apiService.js:280:17)
+      at Object.<anonymous> (src/__tests__/apiService.test.js:124:23)
+
+  console.warn
+    APIs indisponíveis — usando último snapshot em cache
+
+      286 |
+      287 |   if (cached) {
+    > 288 |     console.warn('APIs indisponíveis — usando último snapshot em cache');
+          |             ^
+      289 |     return toCachedResponse(cached);
+      290 |   }
+      291 |
+
+      at warn (src/services/apiService.js:288:13)
+      at Object.<anonymous> (src/__tests__/apiService.test.js:124:23)
+
+  console.log
+    📡 Buscando histórico completo: https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.log
+    ✅ 1 registros recebidos de https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net
+
+      at log (src/services/apiService.js:240:11)
+
+  console.log
+    📡 Buscando histórico completo: https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.warn
+    ⚠️ Azure falhou: HTTP 500 em https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net. Tentando Render...
+
+      252 |     };
+      253 |   } catch (err) {
+    > 254 |     console.warn(`⚠️ Azure falhou: ${err.message}. Tentando Render...`);
+          |             ^
+      255 |   }
+      256 |
+      257 |   try {
+
+      at warn (src/services/apiService.js:254:13)
+      at buscarDadosDispositivo (src/services/apiService.js:280:17)
+      at Object.<anonymous> (src/__tests__/apiService.test.js:147:23)
+
+  console.log
+    📡 Buscando histórico completo: https://server-horta.onrender.com/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.error
+    💥 Render também falhou: HTTP 500 em https://server-horta.onrender.com.
+
+      264 |     };
+      265 |   } catch (err) {
+    > 266 |     console.error(`💥 Render também falhou: ${err.message}.`);
+          |             ^
+      267 |   }
+      268 |
+      269 |   return null;
+
+      at error (src/services/apiService.js:266:13)
+      at buscarDadosDispositivo (src/services/apiService.js:280:17)
+      at Object.<anonymous> (src/__tests__/apiService.test.js:147:23)
+
+  console.log
+    📡 Buscando histórico completo: https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.warn
+    ⚠️ Azure falhou: Histórico vazio em https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net. Tentando Render...
+
+      252 |     };
+      253 |   } catch (err) {
+    > 254 |     console.warn(`⚠️ Azure falhou: ${err.message}. Tentando Render...`);
+          |             ^
+      255 |   }
+      256 |
+      257 |   try {
+
+      at warn (src/services/apiService.js:254:13)
+      at buscarDadosDispositivo (src/services/apiService.js:280:17)
+      at Object.<anonymous> (src/__tests__/apiService.test.js:155:23)
+
+  console.log
+    📡 Buscando histórico completo: https://server-horta.onrender.com/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.error
+    💥 Render também falhou: Histórico vazio em https://server-horta.onrender.com.
+
+      264 |     };
+      265 |   } catch (err) {
+    > 266 |     console.error(`💥 Render também falhou: ${err.message}.`);
+          |             ^
+      267 |   }
+      268 |
+      269 |   return null;
+
+      at error (src/services/apiService.js:266:13)
+      at buscarDadosDispositivo (src/services/apiService.js:280:17)
+      at Object.<anonymous> (src/__tests__/apiService.test.js:155:23)
+
+  console.log
+    📡 Buscando histórico completo: https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.log
+    ✅ 1 registros recebidos de https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net
+
+      at log (src/services/apiService.js:240:11)
+
+  console.log
+    📡 Buscando histórico completo: https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net/api/historico/completo?minutosAtras=10080
+
+      at log (src/services/apiService.js:219:11)
+
+  console.log
+    ✅ 3 registros recebidos de https://horta-api-htggarb3eagagpgm.brazilsouth-01.azurewebsites.net
+
+      at log (src/services/apiService.js:240:11)
+
+PASS src/__tests__/apiService.test.js
+  buscarDadosDispositivo
+    √ retorna dados da API principal (Azure) quando disponível (17 ms)
+    √ retorna dados do fallback (Render) quando Azure falha (5 ms)
+    √ retorna cenário offline quando ambas as APIs falham (3 ms)
+    √ retorna cache quando APIs falham mas snapshot existe (4 ms)
+    √ salva snapshot após fetch bem-sucedido (2 ms)
+    √ retorna offline quando API retorna HTTP 500 (3 ms)
+    √ retorna offline quando histórico está vazio em ambas as APIs (2 ms)
+    √ aceita formato { dashboardData: [...] } da API
+  normalizarRegistro
+    √ normaliza campos nested do formato avançado da API
+    √ normaliza campos flat (formato legado)
+    √ aplica null quando campos UC-01 estão ausentes (1 ms)
+    √ statusIrrigacao: converte inteiro 1 para "LIGADO"
+    √ statusIrrigacao: converte inteiro 0 para "DESLIGADO"
+    √ estaChovendo: converte inteiro 1 para true
+    √ preserva dataHora original (1 ms)
+    √ campos nested têm prioridade sobre campos flat (1 ms)
+    unit.api.reading-boundary — UC-01 Passo 4
+      √ temperatura 213 → valor null, suspeita=true (1 ms)
+      √ temperatura 80 → valor 80, suspeita=false
+      √ temperatura -10 → valor -10, suspeita=false (1 ms)
+      √ temperatura 85 → valor null, suspeita=true (1 ms)
+      √ umidade solo 0 % é aceita na borda inferior
+      √ rejeita temperatura inválida NaN
+      √ rejeita temperatura inválida 81
+      √ rejeita temperatura inválida -10.1
+      √ temperatura 50 °C → temperaturaImprovavel=true (plausibilidade horta)
+      √ temperatura 80 °C → temperaturaImprovavel=true (plausibilidade horta)
+      √ temperatura 22 °C → temperaturaImprovavel=false (plausibilidade horta)
+      √ classificarTemperaturaIntegridade(22) → "normal" (1 ms)
+      √ classificarTemperaturaIntegridade(50) → "improvavel"
+      √ classificarTemperaturaIntegridade(80) → "improvavel"
+      √ classificarTemperaturaIntegridade(null) → "rejeitada"
+      √ rejeita umidade fora de faixa 101 em umidadeAr
+      √ rejeita umidade fora de faixa -1 em umidadeSoloPorcentagem
+  agregarBucketLeituras
+    √ unit.api.reading-boundary — média ignora leituras rejeitadas (null) (1 ms)
+  buscarDadosDispositivo — histórico sanitizado
+    √ não propaga temperatura 213 °C após normalização (2 ms)
+  enviarComandoIrrigacao
+    √ envia ligar:true na API principal quando disponível (1 ms)
+    √ envia ligar:false para desligar a bomba (2 ms)
+    √ tenta fallback quando a API principal falha
+    √ retorna erro quando ambas as APIs falham (1 ms)
+    √ rejeita parâmetro ligar inválido
+
+PASS src/__tests__/observabilityService.test.js
+  observabilityService
+    √ gerarRequestId retorna id único (1 ms)
+    √ logInfo emite JSON estruturado (1 ms)
+    √ logError incrementa fetch_error_total
+    √ logLeituraRejeitada emite reading_rejected e incrementa counter (1 ms)
+    √ recordScreenRender armazena durationMs
+    √ exporMetricsGlobais define window hook
+
+Test Suites: 2 passed, 2 total
+Tests:       46 passed, 46 total
+Snapshots:   0 total
+Time:        1.493 s
+Ran all test suites matching /src\\__tests__\\apiService.test.js|src\\__tests__\\observabilityService.test.js/i.
+
+# Exit code: 0

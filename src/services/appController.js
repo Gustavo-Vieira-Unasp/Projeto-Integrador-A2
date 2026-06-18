@@ -21,6 +21,7 @@ import {
   toCachedResponse,
 } from './cacheService.js';
 import { obterTelemetriaMockada, obterHistoricoMockado } from './mockService.js';
+import { agregarBucketLeituras, enviarComandoIrrigacao } from './apiService.js';
 import { sanitizarEntradaData, sanitizarDuracaoIrrigacao } from './cardHelpers.js';
 import {
   iniciarRouter,
@@ -40,6 +41,8 @@ import {
   renderCanteirosView,
   lerFormCanteiroDoDOM,
 } from '../views/canteirosView.js';
+import { renderEvidenciasC1View } from '../views/evidenciasC1View.js';
+import { carregarLogTestes } from './evidenciasC1Content.js';
 import {
   exporMetricsGlobais,
   logInfo,
@@ -272,25 +275,23 @@ function processarAgrupamentoETempo() {
 
   estadoApp.dadosGraficoTimelineAgrupados = Object.keys(buckets).sort().map(chave => {
     const lista = buckets[chave];
-    const total = lista.length;
     const dt = new Date(chave);
-    const soma = lista.reduce((a, c) => ({
-      s: a.s + (c.umidadeSoloPorcentagem || 0),
-      ar: a.ar + (c.umidadeAr || 0),
-      t: a.t + (c.temperatura || 0),
-      l: a.l + (c.luzSolar || 0),
-      p: a.p + (c.pHSolo || 7),
-    }), { s: 0, ar: 0, t: 0, l: 0, p: 0 });
+    const medias = agregarBucketLeituras(lista);
+    const chuva = lista.filter((r) => r.estaChovendo).length;
+    const alerta = lista.filter((r) => r.alertaCriticoAlface).length;
+    const irrigacao = lista.filter((r) => r.statusIrrigacao === 'LIGADO').length;
+    const total = lista.length;
 
     return {
       dataHora: `${dt.toLocaleDateString('pt-BR')} ${dt.toLocaleTimeString('pt-BR', { hour12: false })}`,
-      umidadeSoloPorcentagem: parseFloat((soma.s / total).toFixed(1)),
-      umidadeAr: parseFloat((soma.ar / total).toFixed(1)),
-      temperatura: parseFloat((soma.t / total).toFixed(1)),
-      luzSolar: parseFloat((soma.l / total).toFixed(1)),
-      pHSolo: parseFloat((soma.p / total).toFixed(2)),
-      estaChovendo: lista[0]?.estaChovendo || false,
-      statusIrrigacao: lista[0]?.statusIrrigacao || 'DESLIGADO',
+      umidadeSoloPorcentagem: medias.umidadeSoloPorcentagem,
+      umidadeAr: medias.umidadeAr,
+      temperatura: medias.temperatura,
+      luzSolar: medias.luzSolar,
+      pHSolo: medias.pHSolo,
+      estaChovendo: (chuva / total) >= 0.5,
+      alertaCriticoAlface: (alerta / total) >= 0.5,
+      statusIrrigacao: (irrigacao / total) >= 0.5 ? 'LIGADO' : 'DESLIGADO',
       vazaoGotejamentoLh: lista[0]?.vazaoGotejamentoLh || 0,
       controleManualAtivo: lista[0]?.controleManualAtivo || false,
       estacao: lista[0]?.estacao || '---',
@@ -466,12 +467,25 @@ function renderizarCanteiros() {
   recordScreenRender('canteiros', performance.now() - t0);
 }
 
+async function renderizarEvidenciasC1() {
+  const t0 = performance.now();
+  if (appContainer) {
+    appContainer.innerHTML = '<div class="flex flex-col items-center justify-center py-20 gap-4"><div class="h-10 w-10 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin"></div><p class="text-sm font-mono text-slate-500">Carregando evidências C1...</p></div>';
+  }
+  const logTestes = await carregarLogTestes();
+  if (appContainer) {
+    appContainer.innerHTML = renderEvidenciasC1View({ logTestes });
+  }
+  recordScreenRender('evidencias-c1', performance.now() - t0);
+}
+
 function renderizarTelaAtual() {
   atualizarNavbar();
   const rota = getRotaAtual();
   if (rota === 'alertas') renderizarAlertas();
   else if (rota === 'historico') renderizarHistorico();
   else if (rota === 'canteiros') renderizarCanteiros();
+  else if (rota === 'evidencias-c1') renderizarEvidenciasC1();
   else renderizarPrincipal();
 }
 
@@ -536,14 +550,37 @@ function vincularEventosDashboard() {
     persistirSessaoLocal();
   });
 
-  document.getElementById('btn-toggle-bomba')?.addEventListener('click', () => {
+  document.getElementById('btn-toggle-bomba')?.addEventListener('click', async () => {
     if (comandoBloqueado()) return;
+
     const bombaAtiva = estadoApp.telemetriaAtual?.statusIrrigacao === 'LIGADO';
-    const cmd = bombaAtiva
-      ? 'Parar irrigação'
-      : `Iniciar irrigação (${estadoApp.duracaoIrrigacaoSeg}s)`;
-    estadoApp.ultimoComando = cmd;
-    adicionarLogErro('CMD', cmd);
+    const ligar = !bombaAtiva;
+    const cmd = ligar
+      ? `Iniciar irrigação (${estadoApp.duracaoIrrigacaoSeg}s)`
+      : 'Parar irrigação';
+
+    estadoApp.ultimoComando = `${cmd}…`;
+    renderizarTelaAtual();
+
+    const resultado = await enviarComandoIrrigacao(ligar);
+
+    if (resultado.ok) {
+      estadoApp.ultimoComando = `${cmd} — ${resultado.statusAtual}`;
+      adicionarLogErro('CMD', estadoApp.ultimoComando);
+      logInfo('irrigation_command_ok', {
+        ligar,
+        status: resultado.statusAtual,
+        baseUrl: resultado.baseUrl,
+      });
+      persistirSessaoLocal();
+      await processarCicloDadosEUI();
+      return;
+    }
+
+    estadoApp.ultimoComando = `${cmd} — FALHOU`;
+    adicionarLogErro('ERR', resultado.erro || 'Falha ao enviar comando de irrigação');
+    logInfo('irrigation_command_failed', { ligar, erro: resultado.erro });
+    persistirSessaoLocal();
     renderizarTelaAtual();
   });
 }
@@ -690,6 +727,8 @@ async function onRotaMudou(rota, query) {
     await carregarHistorico();
   } else if (rota === 'canteiros') {
     carregarCanteirosView();
+  } else if (rota === 'evidencias-c1') {
+    /* render estático + fetch log local */
   } else if (rota === 'principal') {
     if (!getCachedPayload()) await atualizarEstadoDados();
   }

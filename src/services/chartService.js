@@ -1,3 +1,5 @@
+import { criarPluginFaixasTemperaturaC1 } from './temperaturaZonasChart.js';
+
 export function inicializarGraficoAnalitico(canvasCtx, dadosAgrupados, chartInstance, onPontoSelecionado) {
   if (!dadosAgrupados || dadosAgrupados.length === 0) return chartInstance;
 
@@ -109,6 +111,9 @@ export function inicializarGraficoAnalitico(canvasCtx, dadosAgrupados, chartInst
   const isDark = document.documentElement.classList.contains('dark')
     || window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+  const pluginFaixasTemperaturaC1 = criarPluginFaixasTemperaturaC1(isDark);
+  const chartPlugins = [pluginFaixasFundo, pluginFaixasTemperaturaC1];
+
   const gridColor  = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
   const tickColor  = isDark ? '#64748b' : '#94a3b8';
   const labelColor = isDark ? '#64748b' : '#94a3b8';
@@ -132,7 +137,6 @@ export function inicializarGraficoAnalitico(canvasCtx, dadosAgrupados, chartInst
         callbacks: {
           label(ctx) {
             if (ctx.dataset.id === 'ph') {
-              // Desnormaliza para exibir pH real no tooltip
               const phReal = ((ctx.parsed.y / 100) * 5.0 + 4.0).toFixed(2);
               return ` pH Solo: ${phReal}`;
             }
@@ -190,6 +194,7 @@ export function inicializarGraficoAnalitico(canvasCtx, dadosAgrupados, chartInst
     chartInstance.data.labels   = labels;
     chartInstance.data.datasets = datasets;
     chartInstance.options = opcoesBase;
+    chartInstance.config.plugins = chartPlugins;
     chartInstance.update('none');
     return chartInstance;
   }
@@ -197,7 +202,7 @@ export function inicializarGraficoAnalitico(canvasCtx, dadosAgrupados, chartInst
   return new Chart(canvasCtx, {
     type: 'line',
     data: { labels, datasets },
-    plugins: [pluginFaixasFundo],
+    plugins: chartPlugins,
     options: opcoesBase,
   });
 }
