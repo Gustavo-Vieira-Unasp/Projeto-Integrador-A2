@@ -7,6 +7,7 @@ export const ROTAS = {
   alertas: { path: '/alertas', hash: '#/alertas', label: 'Alertas', navLabel: 'Alertas' },
   historico: { path: '/historico', hash: '#/historico', label: 'Histórico', navLabel: 'Histórico' },
   canteiros: { path: '/canteiros', hash: '#/canteiros', label: 'Canteiros', navLabel: 'Canteiros' },
+  'evidencias-c1': { path: '/evidencias-c1', hash: '#/evidencias-c1', label: 'Evidências C1', navLabel: 'C1' },
 };
 
 const ALIAS = {
@@ -16,6 +17,7 @@ const ALIAS = {
   '/alertas': 'alertas',
   '/historico': 'historico',
   '/canteiros': 'canteiros',
+  '/evidencias-c1': 'evidencias-c1',
 };
 
 let rotaAtual = 'principal';

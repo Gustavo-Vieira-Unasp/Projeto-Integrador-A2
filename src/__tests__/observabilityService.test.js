@@ -2,6 +2,7 @@ import {
   gerarRequestId,
   logInfo,
   logError,
+  logLeituraRejeitada,
   recordScreenRender,
   getMetrics,
   exporMetricsGlobais,
@@ -10,6 +11,7 @@ import {
 describe('observabilityService', () => {
   beforeEach(() => {
     jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(console, 'warn').mockImplementation(() => {});
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
@@ -36,6 +38,21 @@ describe('observabilityService', () => {
     const before = getMetrics().fetch_error_total;
     logError('fetch_failed', { error: 'timeout' });
     expect(getMetrics().fetch_error_total).toBe(before + 1);
+  });
+
+  test('logLeituraRejeitada emite reading_rejected e incrementa counter', () => {
+    const before = getMetrics().reading_rejected_total;
+    logLeituraRejeitada({
+      campo: 'temperatura',
+      valorOriginal: 213,
+      motivo: 'OUT_OF_RANGE_HIGH',
+    });
+    expect(getMetrics().reading_rejected_total).toBe(before + 1);
+    expect(console.warn).toHaveBeenCalled();
+    const payload = JSON.parse(console.warn.mock.calls[0][0]);
+    expect(payload.event).toBe('reading_rejected');
+    expect(payload.campo).toBe('temperatura');
+    expect(payload.motivo).toBe('OUT_OF_RANGE_HIGH');
   });
 
   test('recordScreenRender armazena durationMs', () => {

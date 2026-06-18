@@ -1,5 +1,6 @@
 import { formatarIdadeCache } from './cacheService.js';
 import { renderCardSensor, renderSidePanels } from './appRenderService.js';
+import { ZONAS_TEMP_GRAFICO } from './temperaturaZonasChart.js';
 import {
   calcularStatusUmidadeSolo,
   calcularStatusUmidadeAr,
@@ -62,15 +63,19 @@ export function gerarLayoutDashboard({
     ? `<span class="text-slate-400 font-normal ml-1">· cache ${formatarIdadeCache(fetchedAt)}</span>`
     : '';
 
-  const obterDado = (ponto, telemetria, campoSnake, campoCamel) =>
-    ponto?.[campoSnake] ?? telemetria?.[campoCamel] ?? telemetria?.[campoSnake] ?? 0;
+  const obterDado = (ponto, telemetria, campoSnake, campoCamel) => {
+    const bruto = ponto?.[campoSnake] ?? telemetria?.[campoCamel] ?? telemetria?.[campoSnake];
+    return bruto ?? null;
+  };
+
+  const errosLeitura = telemetriaAtual?.errosLeitura ?? {};
 
   const d = {
     umidade_solo_pct: obterDado(pontoSelecionado, telemetriaAtual, 'umidade_solo_pct', 'umidadeSoloPorcentagem'),
     umidade_ar_pct:   obterDado(pontoSelecionado, telemetriaAtual, 'umidade_ar_pct',   'umidadeAr'),
     temperatura_c:    obterDado(pontoSelecionado, telemetriaAtual, 'temperatura_c',    'temperatura'),
-    ph_solo:          obterDado(pontoSelecionado, telemetriaAtual, 'ph_solo',           'pHSolo'),
-    vazao_gotejamento:obterDado(pontoSelecionado, telemetriaAtual, 'vazao_gotejamento','vazaoGotejamentoLh'),
+    ph_solo:          pontoSelecionado?.ph_solo ?? telemetriaAtual?.pHSolo ?? 7,
+    vazao_gotejamento: pontoSelecionado?.vazao_gotejamento ?? telemetriaAtual?.vazaoGotejamentoLh ?? 0,
     irrigacao_ativa:  telemetriaAtual?.statusIrrigacao === 'LIGADO' || telemetriaAtual?.statusIrrigacao === 'LIGADA',
     status_bomba_manual: telemetriaAtual?.controleManualAtivo ?? false,
     luz_pct:          pontoSelecionado?.luminosidade_lux ?? telemetriaAtual?.luzSolar ?? 0,
@@ -97,6 +102,21 @@ export function gerarLayoutDashboard({
   const estIcon = iconeEstacao[estacaoTexto?.toLowerCase()] || '🌿';
   const ceuIcon = iconeCeu[ceuTexto?.toLowerCase()] || '☁️';
 
+  const legendaFaixasTempC1 = (() => {
+    const escalaMax = 85;
+    const escalaMin = ZONAS_TEMP_GRAFICO[0].de;
+    const span = escalaMax - escalaMin;
+    const segmentos = ZONAS_TEMP_GRAFICO.map(z => {
+      const pct = ((z.ate - z.de) / span) * 100;
+      return `<span style="width:${pct}%;background:${z.cor}"></span>`;
+    }).join('');
+    return `
+      <span class="flex items-center gap-1.5" title="−10…50 plausível · 50…80 improvável · >80 UC-01">
+        <span class="inline-flex w-12 h-2 rounded-sm overflow-hidden border border-slate-300/40 dark:border-slate-600/50">${segmentos}</span>
+        Temp C1
+      </span>`;
+  })();
+
   const legendaFaixas = `
     <div class="flex items-center gap-4 text-[10px] font-mono text-slate-500 dark:text-slate-400">
       <span class="flex items-center gap-1.5">
@@ -107,6 +127,7 @@ export function gerarLayoutDashboard({
         <span class="inline-block w-3 h-3 rounded-sm" style="background:rgba(16,185,129,0.28)"></span>
         Irrigação
       </span>
+      ${legendaFaixasTempC1}
       <span class="flex items-center gap-1.5">
         <span class="inline-block w-3 h-2 border-t-2 border-dashed border-purple-500"></span>
         pH (norm.)
@@ -331,7 +352,7 @@ export function gerarLayoutDashboard({
             cenarioAtual,
             statusUmidSolo,
             { icone: '🌱', corValor: 'text-emerald-600 dark:text-emerald-400', corBarra: 'bg-emerald-500' },
-            { timestamp: timestampLeitura, delta: deltaUmidSolo, showProgressBar: true, progressBarPct: barUmidSolo, badge: badgeUmidSolo }
+            { timestamp: timestampLeitura, delta: deltaUmidSolo, showProgressBar: true, progressBarPct: barUmidSolo, badge: badgeUmidSolo, motivoRejeicao: errosLeitura.umidadeSoloPorcentagem }
           )}
           ${renderCardSensor(
             'Umid. Ar',
@@ -339,7 +360,7 @@ export function gerarLayoutDashboard({
             cenarioAtual,
             statusUmidAr,
             { icone: '💧', corValor: 'text-sky-600 dark:text-sky-400', corBarra: 'bg-sky-500' },
-            { timestamp: timestampLeitura, delta: deltaUmidAr, showProgressBar: true, progressBarPct: barUmidAr }
+            { timestamp: timestampLeitura, delta: deltaUmidAr, showProgressBar: true, progressBarPct: barUmidAr, motivoRejeicao: errosLeitura.umidadeAr }
           )}
           ${renderCardSensor(
             'Temperatura',
@@ -347,7 +368,7 @@ export function gerarLayoutDashboard({
             cenarioAtual,
             statusTemp,
             { icone: '🌡️', corValor: 'text-red-600 dark:text-red-400', corBarra: 'bg-red-500' },
-            { timestamp: timestampLeitura, delta: deltaTemp, showProgressBar: true, progressBarPct: barTemp }
+            { timestamp: timestampLeitura, delta: deltaTemp, showProgressBar: true, progressBarPct: barTemp, motivoRejeicao: errosLeitura.temperatura, temperaturaImprovavel: telemetriaAtual?.temperaturaImprovavel === true }
           )}
         </div>
         <div class="grid grid-cols-1 gap-4">

@@ -46,6 +46,7 @@ export function renderHistoricoView({ estado, leituras = [], paginacao = {}, fil
     const flags = [];
     if (r.sensorOffline) flags.push('<span class="text-red-500">offline</span>');
     if (r.leituraSuspeita) flags.push('<span class="text-amber-500">suspeito</span>');
+    if (r.temperaturaImprovavel && !r.leituraSuspeita) flags.push('<span class="text-amber-600">improvável</span>');
     const dataFmt = new Date(r.dataHora).toLocaleString('pt-BR');
     return `
       <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900/50">
@@ -104,6 +105,7 @@ export function gerarCsvLeituras(leituras) {
     const flags = [];
     if (r.sensorOffline) flags.push('offline');
     if (r.leituraSuspeita) flags.push('suspeito');
+    if (r.temperaturaImprovavel && !r.leituraSuspeita) flags.push('improvavel');
     return [
       r.dataHora,
       r.canteiroId || 'A',
