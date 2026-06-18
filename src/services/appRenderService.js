@@ -87,7 +87,7 @@ export const MOTIVO_REJEICAO_LABEL = {
  *   - {number}       progressBarPct - % de preenchimento da barra (Passo 1).
  *   - {string|null}  badge          - Texto de badge contextual (Passo 5).
  *   - {string|null}  motivoRejeicao - Código de rejeição UC-01 (C1 integridade).
- *   - {boolean}      temperaturaImprovavel - Aceito UC-01, improvável p/ horta (>50 °C).
+ *   - {boolean}      temperaturaImprovavel - Aceito UC-01, improvável p/ horta (≥50 °C).
  */
 export function renderCardSensor(titulo, valor, unidade, estadoCard, descricaoStatus, accent = {}, opcoes = {}) {
   const isOffline = estadoCard === 'offline';

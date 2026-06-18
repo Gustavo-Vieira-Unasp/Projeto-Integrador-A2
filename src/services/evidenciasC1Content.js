@@ -33,9 +33,9 @@ export const DECISOES_RESUMO = [
     ],
   },
   {
-    titulo: 'Plausibilidade horta (>50 °C)',
+    titulo: 'Plausibilidade horta (≥50 °C)',
     linhas: [
-      { opcao: 'Rejeitar >50 °C na ingestão', decisao: 'Rejeitada', motivo: 'Quebraria borda UC-01 de 80 °C no enunciado' },
+      { opcao: 'Rejeitar ≥50 °C na ingestão', decisao: 'Rejeitada', motivo: 'Quebraria borda UC-01 de 80 °C no enunciado' },
       { opcao: 'temperaturaImprovavel + card amber', decisao: 'Adotada', motivo: 'Aceito pelo sensor; absurdo p/ ar ambiente na horta' },
     ],
   },

@@ -24,7 +24,7 @@ export const TEMP_SENTINEL_DHT22 = 85;
 
 /**
  * Limiar de plausibilidade para horta (clima BR ~44,8 °C recorde).
- * Não altera FAIXAS_UC01 — leituras >50 °C permanecem aceitas na ingestão.
+ * Não altera FAIXAS_UC01 — leituras ≥50 °C permanecem aceitas na ingestão.
  */
 export const TEMP_PLAUSIVEL_HORTA_MAX = 50;
 

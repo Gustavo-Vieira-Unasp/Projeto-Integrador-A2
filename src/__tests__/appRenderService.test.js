@@ -99,6 +99,17 @@ describe('renderCardSensor — estado parcial / falha', () => {
     expect(html).toContain('border-red-300');
     expect(html).toContain('bg-red-500');
   });
+
+  test('exibe estado amber de temperatura improvável p/ horta', () => {
+    const html = renderCardSensor('Temperatura', 50, '°C', 'normal', 'Critico', {}, {
+      temperaturaImprovavel: true,
+    });
+    expect(html).toContain('Improvável p/ horta');
+    expect(html).toContain('50');
+    expect(html).toContain('border-amber-300');
+    expect(html).toContain('bg-amber-500');
+    expect(html).not.toContain('Leitura inválida');
+  });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

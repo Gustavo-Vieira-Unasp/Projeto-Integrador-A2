@@ -159,7 +159,7 @@ function renderGraficoFaixasTemperatura() {
 
   const zonas = [
     { de: -10, ate: TEMP_PLAUSIVEL_HORTA_MAX, fill: 'rgba(16,185,129,0.35)', label: 'Normal / plausível horta' },
-    { de: TEMP_PLAUSIVEL_HORTA_MAX, ate: 80, fill: 'rgba(245,158,11,0.35)', label: 'UC-01 ok · improvável (>50 °C)' },
+    { de: TEMP_PLAUSIVEL_HORTA_MAX, ate: 80, fill: 'rgba(245,158,11,0.35)', label: 'UC-01 ok · improvável (≥50 °C)' },
     { de: 80, ate: 85, fill: 'rgba(248,113,113,0.25)', label: 'Fora UC-01 (80–85)' },
     { de: 85, ate: EIXO_MAX, fill: 'rgba(239,68,68,0.3)', label: 'Rejeitado (sentinel / impossível)' },
   ];
